@@ -1,0 +1,17 @@
+#page-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 100px 0;
+}
+
+.content {
+    position: relative;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 10px;
+}
