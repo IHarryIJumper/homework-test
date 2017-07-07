@@ -1,36 +1,37 @@
 "use strict";
 
 var paintData = {
-	expenditure: 0.4, // расход литров на метр квадратный
-	materials: {
-		1: 5, // id товара : объем в упаковке (id=1: 5 литров)
-		2: 10,
-		67: 15,
-		34: 40
-	},
-	prices: {
-		1: { // id товара
-			3: 120, // id поставщика: цена за упаковку
-			5: 123.45,
-			49: 135
+		expenditure: 0.4, // расход литров на метр квадратный
+		materials: {
+			1: 5, // id товара : объем в упаковке (id=1: 5 литров)
+			2: 10,
+			67: 15,
+			34: 40
 		},
-		2: {
-			3: 240,
-			5: 240.80,
-			49: 230
-		},
-		67: {
-			3: 340,
-			5: 360,
-			49: 300.05
-		},
-		34: {
-			3: 1200,
-			5: 1050.99,
-			49: 1150
+		prices: {
+			1: { // id товара
+				3: 120, // id поставщика: цена за упаковку
+				5: 123.45,
+				49: 135
+			},
+			2: {
+				3: 240,
+				5: 240.80,
+				49: 230
+			},
+			67: {
+				3: 340,
+				5: 360,
+				49: 300.05
+			},
+			34: {
+				3: 1200,
+				5: 1050.99,
+				49: 1150
+			}
 		}
-	}
-};
+	},
+	squareInput = document.getElementById("square-input");
 
 
 function insertConsumption() {
@@ -72,8 +73,24 @@ function insertMaterials() {
 }
 
 function squareValidation(event) {
+	if (event.keyCode === 13) {
+		console.log('Calculations!');
+	} else {
+
+		console.log(event.target.value);
+		var number = parseInt(event.target.value);
+
+		if(number < 0) {
+			event.target.value = 0;
+		}
+	}
 	console.log(event);
 }
 
+function addListeners() {
+	squareInput.addEventListener("change", squareValidation)
+}
+
+addListeners();
 insertConsumption();
 insertMaterials();
