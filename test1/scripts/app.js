@@ -31,7 +31,13 @@ var paintData = {
 			}
 		}
 	},
-	squareInput = document.getElementById("square-input");
+	sortedMaterialsKeys = [],
+	sellersArray = [],
+	optimalPrice = null,
+	optimalMaterials = [],
+	optimalSeller = 'Нет',
+	squareInput = document.getElementById("square-input"),
+	calculateButton = document.getElementById("square-calc");
 
 
 function insertConsumption() {
@@ -75,22 +81,151 @@ function insertMaterials() {
 function squareValidation(event) {
 	if (event.keyCode === 13) {
 		console.log('Calculations!');
+		calculations();
 	} else {
 
 		console.log(event.target.value);
-		var number = parseInt(event.target.value);
+		var number = parseFloat(event.target.value);
 
-		if(number < 0) {
+		if (number < 0) {
 			event.target.value = 0;
 		}
 	}
 	console.log(event);
 }
 
+function calculations(event) {
+	var squareValue = parseFloat(squareInput.value),
+		priceElement = document.getElementById("price-rate"),
+		materialsElement = document.getElementById("materials-rate"),
+		sellerElement = document.getElementById("seller-rate");
+
+	if (squareValue > 0) {
+		getOptimalPrice(squareValue);
+		priceElement.innerText = optimalPrice;
+		materialsElement.innerText = optimalMaterials.join(', ');
+		sellerElement.innerText = optimalSeller;
+	} else {
+		priceElement.innerText = 0;
+		materialsElement.innerText = 'Нет';
+		sellerElement.innerText = 'Нет';
+	}
+}
+
 function addListeners() {
-	squareInput.addEventListener("change", squareValidation)
+	squareInput.addEventListener("change", squareValidation);
+	calculateButton.addEventListener("click", calculations);
+}
+
+function swap(json) {
+	var swapped = {};
+	for (var key in json) {
+		swapped[json[key]] = key;
+	}
+	return swapped;
+}
+
+function sortMaterials() {
+	var swappedMaterialsJson = swap(paintData.materials),
+		sortedMaterialsValues = Object.keys(swappedMaterialsJson).sort(function (a, b) {
+			return a - b;
+		});
+
+	sortedMaterialsValues.map(function (value, valueIndex) {
+		sortedMaterialsKeys.push(swappedMaterialsJson[value]);
+	});
+
+	console.log(sortedMaterialsKeys);
+}
+
+function getSellers() {
+	sellersArray = Object.keys(paintData.prices[sortedMaterialsKeys[0]]);
+
+	console.log(sellersArray);
+}
+
+function getBestPrice(materialsSet) {
+	console.log(materialsSet);
+	var bestPrice = null,
+		currentPrice = 0,
+		bestSeller = 0;
+	for (var seller in sellersArray) {
+		for (var material in materialsSet) {
+			currentPrice += paintData.prices[materialsSet[material]][sellersArray[seller]];
+		}
+		if (bestPrice > currentPrice || bestPrice === null) {
+			bestPrice = currentPrice;
+			bestSeller = sellersArray[seller];
+		}
+
+		currentPrice = 0;
+	}
+
+	if (optimalPrice > bestPrice || optimalPrice === null) {
+		optimalPrice = bestPrice;
+		optimalMaterials = materialsSet;
+		optimalSeller = bestSeller;
+	}
+}
+
+function getMaterialConfiguration(initialMaterial, materialIndex, liquidVolume) {
+	var materialArray = [initialMaterial],
+		currentVolume = paintData.materials[initialMaterial],
+		configurationArray = [],
+		minConfigValue = materialIndex,
+		currentConfigValue = materialIndex + 1,
+		maxConfigValue = sortedMaterialsKeys.length;
+
+	if (configurationArray.length === 0) {
+		while (currentVolume < liquidVolume) {
+			currentVolume += paintData.materials[initialMaterial];
+			configurationArray.push(minConfigValue);
+			materialArray.push(initialMaterial);
+		}
+	}
+
+	getBestPrice(materialArray);
+
+	if (configurationArray.length !== 0) {
+		while (currentConfigValue < maxConfigValue) {
+
+			for (var configIndex in configurationArray) {
+				if (configurationArray[configIndex] < currentConfigValue) {
+					materialArray = [initialMaterial];
+					currentVolume = paintData.materials[initialMaterial];
+
+					configurationArray[configIndex] = currentConfigValue;
+
+					var lastValue,
+						configIteration = 0;
+					while (currentVolume < liquidVolume) {
+						lastValue = configurationArray[configIteration];
+						currentVolume += paintData.materials[sortedMaterialsKeys[configurationArray[configIteration]]];
+						materialArray.push(sortedMaterialsKeys[currentConfigValue]);
+						configIteration++;
+					}
+
+					getBestPrice(materialArray);
+					if (lastValue === currentConfigValue) {
+						currentConfigValue++;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+function getOptimalPrice(squareValue) {
+	var liquidVolume = squareValue * paintData.expenditure;
+
+	for (var material in sortedMaterialsKeys) {
+		getMaterialConfiguration(sortedMaterialsKeys[material], sortedMaterialsKeys.indexOf(material), liquidVolume);
+	}
 }
 
 addListeners();
 insertConsumption();
 insertMaterials();
+sortMaterials();
+getSellers();

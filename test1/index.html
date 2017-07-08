@@ -12,7 +12,7 @@
 	<link href="styles/content.css" rel="stylesheet">
 	<link href="styles/wave.css" rel="stylesheet">
 	<link href="styles/helpers.css" rel="stylesheet">
-	<script src="scripts/polifills.js"></script>
+	<script src="scripts/polyfills.js"></script>
 	<title>#1 Test</title>
 </head>
 
@@ -26,8 +26,25 @@
 				<div class="card-title">Площадь, кв.м</div>
 				<div class="card-content">
 					<span>Введите вашу площадь</span>
-					<input id="square-input"type="number" name="placeSquare" value="0" placeholder="Площадь">
-					<button type="button">Расчет</button>
+					<input id="square-input" type="number" name="placeSquare" value="0" placeholder="Площадь">
+					<button id="square-calc" type="button">Расчет</button>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-title">Результат</div>
+				<div class="card-content">
+					<div id="price-result">
+						<span>Оптимальная стоимость работ: </span>
+						<span id="price-rate" class="bold">0</span>
+					</div>
+					<div id="materials-result">
+						<span>Оптимальный набор материалов: </span>
+						<span id="materials-rate" class="bold">Нет</span>
+					</div>
+					<div id="seller-result">
+						<span>Поставщик: </span>
+						<span id="seller-rate" class="bold">Нет</span>
+					</div>
 				</div>
 			</div>
 			<div class="card">
@@ -40,42 +57,6 @@
 					<h4>Товары:</h4>
 					<ul id="materials-list">
 					</ul>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-title">Площадь, кв.м</div>
-				<div class="card-content">
-					<span>Стоимость работ</span>
-					<button type="button">Бригада 1</button>
-					<button type="button">Бригада 2</button>
-					<button type="button">Бригада 3</button>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-title">Площадь, кв.м</div>
-				<div class="card-content">
-					<span>Стоимость работ</span>
-					<button type="button">Бригада 1</button>
-					<button type="button">Бригада 2</button>
-					<button type="button">Бригада 3</button>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-title">Площадь, кв.м</div>
-				<div class="card-content">
-					<span>Стоимость работ</span>
-					<button type="button">Бригада 1</button>
-					<button type="button">Бригада 2</button>
-					<button type="button">Бригада 3</button>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-title">Площадь, кв.м</div>
-				<div class="card-content">
-					<span>Стоимость работ</span>
-					<button type="button">Бригада 1</button>
-					<button type="button">Бригада 2</button>
-					<button type="button">Бригада 3</button>
 				</div>
 			</div>
 		</div>
