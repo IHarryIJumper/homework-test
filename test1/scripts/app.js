@@ -82,11 +82,8 @@ function inputWarning(message) {
 
 function squareValidation(event) {
 	if (event.keyCode === 13) {
-		console.log('Calculations!');
 		calculations();
 	} else {
-
-		console.log(event.target.value);
 		var number = parseFloat(event.target.value);
 
 		if (number < 0) {
@@ -98,7 +95,6 @@ function squareValidation(event) {
 			inputWarning();
 		}
 	}
-	console.log(event);
 }
 
 function resultMaterialsParser(materials) {
@@ -121,6 +117,8 @@ function resultMaterialsParser(materials) {
 }
 
 function calculations(event) {
+	console.log('Calculations!');
+
 	var squareValue = parseFloat(squareInput.value),
 		priceElement = document.getElementById("price-rate"),
 		materialsElement = document.getElementById("materials-rate"),
@@ -169,19 +167,13 @@ function sortMaterials() {
 	sortedMaterialsValues.map(function (value, valueIndex) {
 		sortedMaterialsKeys.push(swappedMaterialsJson[value]);
 	});
-
-	console.log(sortedMaterialsKeys);
 }
 
 function getSellers() {
 	sellersArray = Object.keys(paintData.prices[sortedMaterialsKeys[0]]);
-
-	console.log(sellersArray);
 }
 
 function getBestPrice(materialsSet) {
-	console.count('Best price checker');
-	console.log(materialsSet);
 	var bestPrice = null,
 		currentPrice = 0,
 		bestSeller = 0;
