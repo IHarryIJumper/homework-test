@@ -11,6 +11,7 @@ var paintData = {
 		prices: {
 			1: { // id товара
 				3: 120, // id поставщика: цена за упаковку
+				// 3: 100, 
 				5: 123.45,
 				49: 135
 			},
@@ -21,6 +22,7 @@ var paintData = {
 			},
 			67: {
 				3: 340,
+				// 3: 299,
 				5: 360,
 				49: 300.05
 			},
@@ -28,6 +30,7 @@ var paintData = {
 				3: 1200,
 				5: 1050.99,
 				49: 1150
+				// 49: 800
 			}
 		}
 	},
@@ -47,15 +50,6 @@ function insertConsumption() {
 function insertMaterials() {
 	var materialsListContainer = document.getElementById("materials-list"),
 		materialsIdArray = Object.keys(paintData.materials);
-
-	/*<li class="list-element">
-		<div class="element-id bold">
-			5
-		</div>
-		<div class="material-value">
-			10
-		</div>
-	</li>*/
 
 	materialsIdArray.map(function (materialId, idIndex) {
 		var materialElement = document.createElement("li"),
@@ -78,6 +72,14 @@ function insertMaterials() {
 	});
 }
 
+function inputWarning(message) {
+	if (message === undefined) {
+		document.getElementById("input-warning").innerText = '';
+	} else {
+		document.getElementById("input-warning").innerText = message;
+	}
+}
+
 function squareValidation(event) {
 	if (event.keyCode === 13) {
 		console.log('Calculations!');
@@ -89,9 +91,33 @@ function squareValidation(event) {
 
 		if (number < 0) {
 			event.target.value = 0;
+		} else if (number > 1000) {
+			// event.target.value = 1000;
+			inputWarning('Значение площади слишком большое, возможен долгий просчет оптимальных значений');
+		} else {
+			inputWarning();
 		}
 	}
 	console.log(event);
+}
+
+function resultMaterialsParser(materials) {
+	var materialsResult = {},
+		materialString = '';
+
+	materials.map(function (material, materialIndex) {
+		if (materialsResult[material] === undefined) {
+			materialsResult[material] = 1;
+		} else {
+			materialsResult[material]++;
+		}
+	});
+
+	Object.keys(materialsResult).map(function (material, materialIndex) {
+		materialString += (material + ' x' + materialsResult[material] + '\n');
+	});
+
+	return materialString;
 }
 
 function calculations(event) {
@@ -100,12 +126,20 @@ function calculations(event) {
 		materialsElement = document.getElementById("materials-rate"),
 		sellerElement = document.getElementById("seller-rate");
 
-	if (squareValue > 0) {
+	optimalPrice = null;
+	optimalMaterials = [];
+	optimalSeller = 'Нет';
+
+	if (squareValue > 0 && squareValue <= 1000) {
+		inputWarning();
 		getOptimalPrice(squareValue);
 		priceElement.innerText = optimalPrice;
-		materialsElement.innerText = optimalMaterials.join(', ');
+		// materialsElement.innerText = optimalMaterials.join(', ');
+		materialsElement.innerText = resultMaterialsParser(optimalMaterials);
 		sellerElement.innerText = optimalSeller;
+		saveData();
 	} else {
+		inputWarning('Введенная площадь некорректна');
 		priceElement.innerText = 0;
 		materialsElement.innerText = 'Нет';
 		sellerElement.innerText = 'Нет';
@@ -114,6 +148,7 @@ function calculations(event) {
 
 function addListeners() {
 	squareInput.addEventListener("change", squareValidation);
+	squareInput.addEventListener("keyup", squareValidation);
 	calculateButton.addEventListener("click", calculations);
 }
 
@@ -145,6 +180,7 @@ function getSellers() {
 }
 
 function getBestPrice(materialsSet) {
+	console.count('Best price checker');
 	console.log(materialsSet);
 	var bestPrice = null,
 		currentPrice = 0,
@@ -162,56 +198,92 @@ function getBestPrice(materialsSet) {
 	}
 
 	if (optimalPrice > bestPrice || optimalPrice === null) {
-		optimalPrice = bestPrice;
+		optimalPrice = Math.ceil(bestPrice * 100) / 100;
 		optimalMaterials = materialsSet;
 		optimalSeller = bestSeller;
 	}
 }
 
-function getMaterialConfiguration(initialMaterial, materialIndex, liquidVolume) {
-	var materialArray = [initialMaterial],
-		currentVolume = paintData.materials[initialMaterial],
-		configurationArray = [],
-		minConfigValue = materialIndex,
-		currentConfigValue = materialIndex + 1,
+function checkMaterialsConfigurations(liquidVolume) {
+	var materialArray = [],
+		currentVolume = 0,
+		initialConfigurationArray = [],
+		minConfigValue = 0,
+		currentConfigValue = 1,
 		maxConfigValue = sortedMaterialsKeys.length;
 
-	if (configurationArray.length === 0) {
-		while (currentVolume < liquidVolume) {
-			currentVolume += paintData.materials[initialMaterial];
-			configurationArray.push(minConfigValue);
-			materialArray.push(initialMaterial);
-		}
+	if (minConfigValue === maxConfigValue) {
+		return;
+	}
+
+	while (currentVolume < liquidVolume) {
+		currentVolume += paintData.materials[sortedMaterialsKeys[0]]; //smallest material can
+		initialConfigurationArray.push(minConfigValue);
+		materialArray.push(sortedMaterialsKeys[0]);
 	}
 
 	getBestPrice(materialArray);
 
-	if (configurationArray.length !== 0) {
-		while (currentConfigValue < maxConfigValue) {
+	while (currentConfigValue < maxConfigValue) {
+		var initIteration = false,
+			finalCalculation = {
+				index: null,
+				volume: null
+			},
+			editableConfigurationArray;
 
-			for (var configIndex in configurationArray) {
-				if (configurationArray[configIndex] < currentConfigValue) {
-					materialArray = [initialMaterial];
-					currentVolume = paintData.materials[initialMaterial];
+		if (initialConfigurationArray.length > 1) {
+			editableConfigurationArray = Array.apply(Array, initialConfigurationArray);
+		} else {
+			editableConfigurationArray = [initialConfigurationArray[0]];
+		}
 
-					configurationArray[configIndex] = currentConfigValue;
-
-					var lastValue,
-						configIteration = 0;
-					while (currentVolume < liquidVolume) {
-						lastValue = configurationArray[configIteration];
-						currentVolume += paintData.materials[sortedMaterialsKeys[configurationArray[configIteration]]];
-						materialArray.push(sortedMaterialsKeys[currentConfigValue]);
-						configIteration++;
-					}
-
-					getBestPrice(materialArray);
-					if (lastValue === currentConfigValue) {
-						currentConfigValue++;
-						break;
-					}
+		for (var configIndex = 0; configIndex < editableConfigurationArray.length; configIndex++) {
+			if (initIteration === false) {
+				editableConfigurationArray[configIndex] = currentConfigValue;
+				initIteration = true;
+			} else {
+				if (editableConfigurationArray[configIndex] < currentConfigValue) {
+					editableConfigurationArray[configIndex]++;
+					editableConfigurationArray.fill(minConfigValue, configIndex + 1);
 				}
 			}
+
+			materialArray = [];
+			currentVolume = 0;
+
+			var lastValue,
+				configIteration = 0;
+			while (currentVolume < liquidVolume) {
+				lastValue = editableConfigurationArray[configIteration];
+				currentVolume += paintData.materials[sortedMaterialsKeys[lastValue]];
+				materialArray.push(sortedMaterialsKeys[lastValue]);
+				configIteration++;
+			}
+
+			if (finalCalculation.index === configIteration && finalCalculation.volume === currentVolume) {
+				var reversedElementIndex = (Array.apply(Array, editableConfigurationArray)).reverse().findIndex(function (element, index, array) {
+					return element === currentConfigValue;
+				});
+
+				if (reversedElementIndex === -1) {
+					console.error('Material index not found in materials array');
+				}
+
+				configIndex = (editableConfigurationArray.length - 1) - reversedElementIndex;
+
+
+			} else {
+				finalCalculation.index = configIteration;
+				finalCalculation.volume = currentVolume;
+				getBestPrice(materialArray);
+			}
+
+			if (lastValue === currentConfigValue) {
+				currentConfigValue++;
+				break;
+			}
+
 		}
 	}
 }
@@ -219,13 +291,24 @@ function getMaterialConfiguration(initialMaterial, materialIndex, liquidVolume) 
 function getOptimalPrice(squareValue) {
 	var liquidVolume = squareValue * paintData.expenditure;
 
-	for (var material in sortedMaterialsKeys) {
-		getMaterialConfiguration(sortedMaterialsKeys[material], sortedMaterialsKeys.indexOf(material), liquidVolume);
-	}
+	checkMaterialsConfigurations(liquidVolume);
 }
 
-addListeners();
-insertConsumption();
-insertMaterials();
-sortMaterials();
-getSellers();
+function saveData() {
+	var resultData = {
+		price: optimalPrice,
+		materials: optimalMaterials,
+		seller: optimalSeller
+	};
+	localStorage.setItem('test1-resultData', JSON.stringify(resultData));
+}
+
+function start() {
+	addListeners();
+	insertConsumption();
+	insertMaterials();
+	sortMaterials();
+	getSellers();
+}
+
+start();

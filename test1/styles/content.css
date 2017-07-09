@@ -73,26 +73,62 @@ ul {
     cursor: pointer;
 }
 
+.result-row {
+    line-height: 35px;
+    position: relative;
+    font-size: 0;
+    width: 100%;
+}
+
+.warning {
+    font-size: 1.2em;
+    color: darkred;
+    display: block;
+    cursor: default;
+}
+
+.result-data {
+    font-size: 14px;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.result-data.info {
+    width: 80%;
+}
+
+.result-data.result {
+    width: 20%;
+}
+
+#materials-result>.result-data.result>span {
+    line-height: 20px;
+    /* position: relative; */
+    display: block;
+    margin-top: 9px;
+}
+
 @media only screen and (max-width: 1023px) {
-    /* For mobile phones: */
-    [class*="card"] {
+    /* For tablets phones: */
+    .card {
         width: 49%;
         margin: 5px 0.5%;
         min-width: 0px;
     }
-    [class*="content"] {
+    .content {
         width: 100%;
     }
 }
 
 @media only screen and (max-width: 500px) {
     /* For mobile phones: */
-    [class*="card"] {
+    .card {
         width: 100%;
         margin: 5px 0px;
         min-width: 0px;
     }
-    [class*="content"] {
+    .content {
         width: 100%;
     }
 }

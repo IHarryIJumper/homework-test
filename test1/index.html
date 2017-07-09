@@ -26,24 +26,39 @@
 				<div class="card-title">Площадь, кв.м</div>
 				<div class="card-content">
 					<span>Введите вашу площадь</span>
-					<input id="square-input" type="number" name="placeSquare" value="0" placeholder="Площадь">
-					<button id="square-calc" type="button">Расчет</button>
+					<div>
+						<input id="square-input" type="number" name="placeSquare" value="0" placeholder="Площадь">
+						<button id="square-calc" type="button">Расчет</button>
+					</div>
+					<span class="warning" id="input-warning"></span>
 				</div>
 			</div>
 			<div class="card">
 				<div class="card-title">Результат</div>
 				<div class="card-content">
-					<div id="price-result">
-						<span>Оптимальная стоимость работ: </span>
-						<span id="price-rate" class="bold">0</span>
+					<div class="result-row" id="price-result">
+						<div class="result-data info">
+							<span>Оптимальная стоимость работ: </span>
+						</div>
+						<div class="result-data result">
+							<span id="price-rate" class="bold">0</span>
+						</div>
 					</div>
-					<div id="materials-result">
-						<span>Оптимальный набор материалов: </span>
-						<span id="materials-rate" class="bold">Нет</span>
+					<div class="result-row" id="materials-result">
+						<div class="result-data info">
+							<span>Оптимальный набор материалов: </span>
+						</div>
+						<div class="result-data result">
+							<span id="materials-rate" class="bold">Нет</span>
+						</div>
 					</div>
-					<div id="seller-result">
-						<span>Поставщик: </span>
-						<span id="seller-rate" class="bold">Нет</span>
+					<div class="result-row" id="seller-result">
+						<div class="result-data info">
+							<span>Поставщик: </span>
+						</div>
+						<div class="result-data result">
+							<span id="seller-rate" class="bold">Нет</span>
+						</div>
 					</div>
 				</div>
 			</div>
