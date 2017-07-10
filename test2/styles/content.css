@@ -24,7 +24,6 @@
     background-color: white;
     font-size: 14px;
     width: 220px;
-    height: 429px;
     box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
     display: inline-block;
     position: relative;
@@ -34,13 +33,13 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    min-height: 200px;
     vertical-align: top;
     cursor: pointer;
     -moz-transition: all 0.1s ease-in;
     -o-transition: all 0.1s ease-in;
     -webkit-transition: all 0.1s ease-in;
     transition: all 0.1s ease-in;
+    overflow: hidden;
 }
 
 .card:hover {
@@ -57,6 +56,15 @@
 .card .card-hover {
     padding: 3px;
     border-radius: 5px;
+}
+
+.card {
+    min-height: 429px;
+}
+
+.card .card-content,
+.card .card-hover {
+    /*min-height: 429px;*/
 }
 
 .card .card-content,
@@ -106,8 +114,31 @@
     font-size: 12px;
 }
 
+.card-description .card-info {
+    margin-bottom: 60px;
+}
+
 .card-description .card-info .info-row {
     margin-bottom: 3px;
+    text-align: justify;
+}
+
+.card-description .card-info .info-row.extended-info {
+    /*height: 0px;*/
+    /*position: absolute;*/
+    /*overflow: hidden;*/
+    display: none;
+    opacity: 0;
+    -moz-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    -webkit-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+
+.card:hover .card-description .card-info .info-row.extended-info {
+    /*height: 15px;*/
+    display: block;
+    opacity: 1;
 }
 
 .card-content .card-completion {
@@ -115,15 +146,40 @@
     bottom: 20px;
     font-size: 23px;
     padding: 0px 8px;
+    height: 24px;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .card-completion span.in-progress {
     color: #b8b8b8;
+    position: absolute;
+    opacity: 1;
 }
 
 .card-completion span.add-to-store {
+    opacity: 0;
+    position: absolute;
     color: #ff5e42;
     border-bottom: 1px solid #ff5e42;
+}
+
+.card-completion span.in-progress,
+.card-completion span.add-to-store {
+    -moz-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    -webkit-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+
+.card:hover .card-completion>.in-progress {
+    opacity: 0;
+}
+
+.card:hover .card-completion>.add-to-store {
+    opacity: 1;
 }
 
 .content .scroll-to-top {
